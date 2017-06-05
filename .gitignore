@@ -1,0 +1,14 @@
+/.idea
+
+/cmd.exe
+/Gemfile.lock
+
+/public/images/*.db
+
+/public/images/pf-slider/Thumbs.db
+
+/.idea/*
+
+
+/public/images/medium/Thumbs.db
+.idea/*
