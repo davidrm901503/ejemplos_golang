@@ -1,12 +1,12 @@
 package main
 
-import "net"
-import "fmt"
-import "bufio"
 import (
   "strings"
   "os"
   "./config/connection"
+  "bufio"
+  "net"
+  "fmt"
 )
 
 
