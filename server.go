@@ -12,13 +12,13 @@ import (
 
 func handleConnectionServer(conn net.Conn) {
   for {
-  msg, _ := bufio.NewReader(conn).ReadString('\n')
-  if  len( msg)  > 0   {
-    fmt.Print("income msg: " + msg)
-    enviar := strings.ToUpper(msg)
-    conn.Write([]byte(enviar + "\n"))
-    //conn.Close()
-   }
+    defer conn.Close()
+    msg, _ := bufio.NewReader(conn).ReadString('\n')
+    if  len( msg)  > 0   {
+      fmt.Print("income msg: " + msg)
+      enviar := strings.ToUpper(msg)
+      conn.Write([]byte(enviar + "\n"))
+     }
   }
 }
 func main() {

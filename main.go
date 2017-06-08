@@ -47,16 +47,33 @@ func Menu (){
   switch opcion {
   case "1":
     rw_files.ReadByLine("leer")
+    Menu()
+    break
   case "2":
     rw_files.WriteLines([]string {"linea 1","segunda"},"write.txt")
+    Menu()
+    break
   case "3":
     rw_files.AppendTexto([]string {"agregue esto","otras mas agregado"},"write.txt")
+    Menu()
+    break
   case "4":
     conn_settings :=connection.LoadSettings()
-    conn, _ := net.Dial(conn_settings.Protocol, conn_settings.Host+":"+conn_settings.Port)
+    cant := 0
     for {
-      cliente.Start(conn)
-    }
+      if cant < 11 {
+      conn, err := net.Dial(conn_settings.Protocol, conn_settings.Host+":"+conn_settings.Port)
+      if err != nil {
+        cant++
+        fmt.Println("servidor offline")
+      }else{
+        cliente.Start(conn)
+      }
+    }else{
+        Menu()
+        break
+      }
+  }
   default:
     fmt.Print(opcion+ " no es una opcion valida \n")
     Menu()

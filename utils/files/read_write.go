@@ -10,9 +10,8 @@ import (
 
 //Leer un fichero linea a linea
 func ReadByLine(path string)  {
-
-  if file, err := os.Open(path); err == nil {
-    fmt.Println(" ¡¡ leyedo fichero !! ")
+  if _, err := os.Stat(path); !os.IsNotExist(err) {
+    file, err := os.Open(path)
     defer file.Close()
     //inicializar el scanner para buscar
     scanner := bufio.NewScanner(file)
@@ -28,7 +27,7 @@ func ReadByLine(path string)  {
       log.Fatal(err)
     }
   } else {
-    log.Fatal(err)
+    fmt.Printf("no existe el fichero: "+ path)
   }
 }
 
