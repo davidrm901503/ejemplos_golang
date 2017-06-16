@@ -7,6 +7,7 @@ import (
   "./core"
   "./config/connection"
   "./utils/files"
+  "time"
 )
 //para mostrar las opciones del programa
 func opciones (){
@@ -14,11 +15,11 @@ func opciones (){
   fmt.Println("1 - Leer un fichero ")
   fmt.Println("2 - Sobreescribir un fichero")
   fmt.Println("3 - Agregar texto a un fichero")
-  fmt.Println("4 - Conectarse a un servidor  (levantar antes el servidor)")
+  fmt.Println("4 - Mandar mensajes a HAU (levantar antes el servidor)")
 }
 
 func Menu (){
-
+  conn_settings := connection.LoadSettings()
   //este codigo es para leer los parametros que se pasan al correr el main
   //ejemplo  "go run main.go -h localhost"
   if len(os.Args)>1 {
@@ -58,17 +59,19 @@ func Menu (){
     Menu()
     break
   case "4":
-    conn_settings :=connection.LoadSettings()
+
     cant := 0
     for {
       if cant < 11 {
-      conn, err := net.Dial(conn_settings.Protocol, conn_settings.Host+":"+conn_settings.Port)
-      if err != nil {
-        cant++
-        fmt.Println("servidor offline")
-      }else{
-        cliente.Start(conn)
-      }
+        conn, err := net.Dial(conn_settings.Protocol, conn_settings.Host+":"+conn_settings.Port)
+        if err != nil {
+          cant++
+          fmt.Println("HAU esta offline")
+        }else{
+          cliente.SendMsg(conn)
+          Menu()
+        }
+        time.Sleep(2 * time.Second)
     }else{
         Menu()
         break

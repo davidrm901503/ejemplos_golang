@@ -3,7 +3,6 @@ package main
 import (
   "strings"
   "os"
-  "./config/connection"
   "bufio"
   "net"
   "fmt"
@@ -30,8 +29,7 @@ func main() {
     os.Exit(1)
   }
   defer ln.Close()
-  conn_settings :=connection.LoadSettings()
-  fmt.Println("Escuchando por: " + conn_settings.Host + ":" + conn_settings.Port + "("+conn_settings.Protocol+")")
+  fmt.Println("Escuchando por: 127.0.0.1:8081 (tcp) ")
 
 	for {
     conn, err := ln.Accept()

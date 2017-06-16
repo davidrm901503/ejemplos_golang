@@ -8,7 +8,7 @@ import (
 type Mensaje struct{
 	Completo    string  //  Mensaje Completo
 	Bandera     int     //  Bandera de validar o no el mensaje  2bytes
-	Secuencia   int  //  secuencia del mensaje   11bytes
+	Secuencia   int     //  secuencia del mensaje   11bytes
 	Secuencia_str   string  //  secuencia del mensaje en string  11bytes
 	Hora        string  //  Hora en que lo genero la BMV   8bytes
 	Tipo        string  //  Tipo de Comando utilizado (retransmision,mensaje normal...) 2bytes
@@ -76,6 +76,9 @@ func (m Mensaje) CalculateCheckSum() int{
   }
   return sum
 }
+
+
+
 //Obtiene el tipo de mensajes
 func (m Mensaje) GetType()string{
   if len(m.Datos)>2 { //validamos que sea mayor que 2 para poder extraer el tipo
@@ -83,3 +86,5 @@ func (m Mensaje) GetType()string{
   }
   return ""
 }
+
+
