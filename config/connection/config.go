@@ -12,6 +12,7 @@ type ConfigConn struct {
 	Protocol  string  `json:"protocol"`
 	Host  string `json:"host"`
 	Port  string `json:"port"`
+	Secuencia  string `json:"secuencia"`
 }
 //Inicialiando la conexion con los parametros establecido en  config.json
 func LoadSettings() *ConfigConn {

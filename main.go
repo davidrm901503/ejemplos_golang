@@ -19,6 +19,7 @@ func opciones (){
 }
 
 func Menu (){
+  var seqAsk *string
   conn_settings := connection.LoadSettings()
   //este codigo es para leer los parametros que se pasan al correr el main
   //ejemplo  "go run main.go -h localhost"
@@ -68,7 +69,11 @@ func Menu (){
           cant++
           fmt.Println("HAU esta offline")
         }else{
-          cliente.SendMsg(conn)
+
+          cliente.SendMsg(conn,seqAsk)
+          fmt.Println("termino")
+          fmt.Println(seqAsk)
+
           Menu()
         }
         time.Sleep(2 * time.Second)
