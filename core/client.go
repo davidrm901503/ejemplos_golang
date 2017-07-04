@@ -1,61 +1,45 @@
 package cliente
 
 import (
-  //"bufio"
   "fmt"
   "net"
-  //"sync"
-  "time"
-  //"os"
-  "strconv"
+  //"strconv"
   "strings"
   "os"
   "bufio"
   "log"
-    "ejemplos_golang/config/connection"
+  //"ejemplos_golang/config/connection"
+  "time"
+  "math/rand"
 )
 
 //var wg sync.WaitGroup
 //adicionar texto al final de un fichero
 func SendMsg(conn net.Conn,seqAsk *string) {
-  conn_settings := connection.LoadSettings()
+
+
+  emisoras := [15]string{"RASSINI","WSMX2CK","GMX712R","GNT712R","AMZ805L","SIRENCK","XOM805L","FBK805L","FFLA1CK","NEXX6CK","PRG709R","LIVEPOL","ELEKTRA","ICUADCK","GFNORTE"}
+  index := random(0, 10)
+
+  emisora := emisoras[index]
+  println(emisora)
+
+
+
+
   //defer wg.Done()
   fmt.Println("conexion establecida!!")
-  var secuencia int
+  var secuencia string
   //for {
 
+    if _, err := os.Stat("leer.txt"); !os.IsNotExist(err) {
+      file, err := os.Open("leer.txt")
 
-  //var buf [4]byte   //declarando el header del TCP
-  //_ , error := conn.Read(buf[0:])
-  //defer func() {
-  //  recover()
-  //  fmt.Println("error")
-  //
-  //}()
-  //if error != nil {
-  //  panic("se perdio la conexion con el server")
-  //}
-
-  //str := buf[0] 											//extraemos el primer byte de la longitud
-  //str2 := buf[1] 											//extraemos el segundo byte de la longitud
-  //message_lenth :=int(str)+int(str2)-4						//calculamos la longitud
-  //
-  //if(message_lenth<0){										//validamos que el calculo no sea negativo para evitar panic en el make
-  //  message_lenth = 0
-  //}
-  // var message = make([]byte,message_lenth,message_lenth)		// creamos el slyce de bytes donde se leeran los datos del mensaje
-
-  //peticion,_ := conn.Read(message[0:])										//leemos los datos de la red
-
-  //peticion , error :=conn.Read(message[4:15])
-
-
-
-    if _, err := os.Stat("leer"); !os.IsNotExist(err) {
-      file, err := os.Open("leer")
+      //defer conn.Close()
       defer file.Close()
       //inicializar el scanner para buscar
       scanner := bufio.NewScanner(file)
+
 
       var empezar bool =false
       //iterando sobre el fichero linea a linea
@@ -67,30 +51,24 @@ func SendMsg(conn net.Conn,seqAsk *string) {
         if err = scanner.Err(); err != nil {
           log.Fatal(err)
         }
-        if conn_settings.Secuencia == scanner.Text() {
+        if *seqAsk == scanner.Text() {
           empezar=true
         }
-
-        if !empezar {
-          fmt.Println(conn_settings.Secuencia)
-          fmt.Println(scanner.Text())
-        }
-
-
-
         if empezar {
-          secuencia, _ =  strconv.Atoi( scanner.Text())
 
+          if len(scanner.Text()) == 0   {
+            continue
+          }
 
-          //if secuencia < 15 {
-          //wg.Add(1)
+          *seqAsk= scanner.Text()
+          secuencia =  scanner.Text()
           time.Sleep(1 * time.Second)
 
-          fmt.Println("secuencia :" + strconv.Itoa(secuencia))
+          fmt.Println("secuencia :" + secuencia)
           //texto, _ := reader.ReadString('\n')
           header := []byte{148, 0, 128, 0}
 
-          sequence_id := strconv.Itoa(secuencia)	//convertimos de entero a string para poder agregar los 0 del inicio
+          sequence_id := secuencia	//convertimos de entero a string para poder agregar los 0 del inicio
           //extend length to 11 digits
           sequence_id = strings.Repeat("0",11-len(sequence_id))+sequence_id
           datos := sequence_id+"0715378902074032110 J Q   GFINTER95B-D199512280012280000000000100000000000000100000000000001500000050000000100000000AJ199703280007 "
@@ -106,9 +84,6 @@ func SendMsg(conn net.Conn,seqAsk *string) {
           checksum := []byte{byte(byte1), byte(byte2)}
 
           mensaje := append(sinCHS, string(checksum)...)
-
-
-
           _, err := conn.Write([]byte(mensaje))
 
           time.Sleep(1 * time.Second)
@@ -118,15 +93,10 @@ func SendMsg(conn net.Conn,seqAsk *string) {
           if err != nil {
             panic("se perdio la conexion con el server")
           }
-          if secuencia == 20{
-            time.Sleep(5 * time.Second)
-          }
-          go procesarRespuesta(conn)
+          go ProcesarRespuesta(conn)
 
         }
-
-
-        }
+      }
 
       fmt.Println("¡¡ no hay mas mensajes!!")
 
@@ -140,17 +110,15 @@ func SendMsg(conn net.Conn,seqAsk *string) {
 //  }
 //}
 
-func Retransmitir(conn net.Conn, seq *string)  {
+func ProcesarRespuesta(conn net.Conn) {
 
-}
-
-func procesarRespuesta(conn net.Conn) {
   //defer wg.Done()
   var message = make([]byte,300,300)
   //str := mensaje[4:15] //extramos el string de la secuencia
   conn.Read(message[0:])
 
   var askSec string = string(message[24:35])
+
   fmt.Println("secuencia pedida: "+ string(message[24:35]))
   var temp int
   for i := 0; i < len(askSec); i++  {
@@ -190,4 +158,8 @@ func procesarRespuesta(conn net.Conn) {
       panic("se perdio la conexion con el server")
     }
 
+}
+func random(min, max int) int {
+  rand.Seed(time.Now().Unix())
+  return rand.Intn(max - min) + min
 }
