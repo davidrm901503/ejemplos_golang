@@ -20,7 +20,7 @@ func LoadSettings() *ConfigConn {
 	c := new(ConfigConn)
 	//obtengo los parametros de la conexion del fichero config.json
 	raw, err := ioutil.ReadFile("config/connection/config.json")
-	//si hay error a la hora de leer el  fichero config.json termina el programa
+	//si hay error a la hora de leer.txt el  fichero config.json termina el programa
 	if err != nil {
     fmt.Println(err.Error())
 		os.Exit(1)

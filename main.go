@@ -18,15 +18,15 @@ func opciones (){
   fmt.Println("1 - Leer un fichero ")
   fmt.Println("2 - Sobreescribir un fichero")
   fmt.Println("3 - Agregar texto a un fichero")
-  fmt.Println("4 - Mandar mensajes a HAU")
+  fmt.Println("4 - Generar Mensajes")
+  fmt.Println("5 - Mandar mensajes a HAU")
 }
 
 func Menu (){
   conn_settings := connection.LoadSettings()
  var seqAsk string = conn_settings.Secuencia
-  //seqAsk := new(string)
-  //conn_settings := connection.LoadSettings()
-  //este codigo es para leer los parametros que se pasan al correr el main
+ // seqAsk := new(string)
+  //este codigo es para leer.txt los parametros que se pasan al correr el main
   //ejemplo  "go run main.go -h localhost"
   if len(os.Args)>1 {
     pos :=0
@@ -53,7 +53,7 @@ func Menu (){
 
   switch opcion {
   case "1":
-    rw_files.ReadByLine("leer")
+    rw_files.ReadByLine("leer.txt")
     Menu()
     break
   case "2":
@@ -65,7 +65,9 @@ func Menu (){
     Menu()
     break
   case "4":
-
+    cliente.GenerateMsg()
+    break
+  case "5":
     cant := 0
     for {
       if cant < 11 {
@@ -74,11 +76,10 @@ func Menu (){
           cant++
           fmt.Println("HAU esta offline")
         }else{
+          fmt.Println(seqAsk)
           cliente.SendMsg(conn,&seqAsk)
           fmt.Println("termino")
           fmt.Println(seqAsk)
-
-
           w := watcher.New()
 
           // SetMaxEvents to 1 to allow at most 1 event's to be received

@@ -23,7 +23,7 @@ func ReadByLine(path string)  {
       linea++
     }
 
-    fmt.Println("¡¡ termino de leer!!")
+    fmt.Println("¡¡ termino de leer.txt!!")
     if err = scanner.Err(); err != nil {
       log.Fatal(err)
     }
